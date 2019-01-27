@@ -1,0 +1,62 @@
+---
+# tasks file for ansible-role-setup-mac
+
+# setup repo
+- name: install ghq
+  homebrew:
+    name: ghq
+    state: present
+
+- name: get repo
+  ghq:
+    name: "{{ item }}"
+  with_items:
+    - Yusuke-Shimizu/ansible-role-setup-mac
+    - Yusuke-Shimizu/prometheus-test
+    - Yusuke-Shimizu/ansible_role_VirtualBox_Extension-Pack
+    - Yusuke-Shimizu/ansible_role_asdf_on_mac
+    - Yusuke-Shimizu/install-rb-py-go-on-asdf
+    - Yusuke-Shimizu/travisci-test
+    - Yusuke-Shimizu/install-py-rb-go-cookbook
+    - Yusuke-Shimizu/osx-circleci-chef
+    - Yusuke-Shimizu/circleci-test
+    - asdf-vm/asdf
+    - geerlingguy/mac-dev-playbook
+    - geerlingguy/ansible-role-homebrew
+    - geerlingguy/ansible-role-mas
+    - geerlingguy/dotfiles
+    - cimon-io/ansible-role-asdf
+    - CircleCI-Public/circleci-demo-ios
+
+# setup sublime
+# - name: get sublime package
+
+# setup fish
+- name: install fish
+  homebrew:
+    name: fish
+    state: present
+
+- name: create fish directory
+  file:
+    path: "{{ ansible_env.HOME }}/.config/fish/functions"
+    state: directory
+    owner: y3-shimizu
+    group: staff
+    mode: 0750
+
+- name: install fisherman
+  get_url:
+    url: https://git.io/fisher
+    dest: "{{ ansible_env.HOME }}/.config/fish/functions/fisher.fish"
+    mode: 0644
+    backup: yes
+
+- name: install fisherman plugins
+  shell: "fish -lc 'fisher add {{ item }}'"
+  with_items:
+    - oh-my-fish/plugin-peco
+    - jethrokuan/z
+    - omg/z
+    - omg/peco
+    - yoshiori/fish-peco_select_ghq_repository
